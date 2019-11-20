@@ -1,0 +1,7 @@
+{
+  "compilerOptions": {
+    "paths": {
+      "mo-js": ["src/index.d.ts"]
+    }
+  }
+}
