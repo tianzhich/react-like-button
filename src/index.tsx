@@ -1,7 +1,7 @@
 /**
  * @Date: 2019-11-18 20:51:04
  * @LastEditors: Tian Zhi
- * @LastEditTime: 2019-11-20 10:07:11
+ * @LastEditTime: 2019-11-21 20:46:50
  */
 import React from "react";
 import ReactDOM from "react-dom";
@@ -21,3 +21,5 @@ ReactDOM.render(
   </ButtonWrap>,
   document.getElementById("root")
 );
+
+export default Button;
