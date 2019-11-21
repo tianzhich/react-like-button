@@ -1,8 +1,14 @@
-import React, { useState, useRef, useEffect, useCallback } from "react";
+import React, {
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  ReactSVGElement
+} from "react";
 import mojs from "mo-js";
 import { ThemeProvider } from "styled-components";
 import ClapWrap from "./components/ClapWrap";
-import ClapIcon from "./components/ClapIcon";
+import ClapIcon, { IconProps } from "./components/ClapIcon";
 import ClapButton from "./components/ClapButton";
 import ClapCount from "./components/ClapCount";
 import ClapCountTotal from "./components/ClapCountTotal";
@@ -13,7 +19,7 @@ interface ClapProps {
   theme?: Record<string, any>;
   maxCount?: number;
   onCountChange?: (args: { count: number; countTotal: number }) => void;
-  iconComponent?: typeof ClapIcon;
+  iconSVG?: (props: IconProps) => ReactSVGElement;
 }
 
 const defaultTheme = {
@@ -31,9 +37,8 @@ const Clap: React.FC<ClapProps> = props => {
     theme = {},
     maxCount = MAX_COUNT,
     onCountChange,
-    iconComponent = ClapIcon
+    iconSVG
   } = props;
-  const IconClap = iconComponent;
 
   const [unClicked, setUnClicked] = useState(true);
   const [cnt, setCnt] = useState(count);
@@ -42,7 +47,6 @@ const Clap: React.FC<ClapProps> = props => {
   const [isHover, setIsHover] = useState(false);
 
   const clapButtonRef = useRef<HTMLButtonElement | null>(null);
-  const clapIconRef = useRef<SVGSVGElement | null>(null);
   const clapCountRef = useRef<HTMLSpanElement | null>(null);
   const clapCountTotalRef = useRef<HTMLSpanElement | null>(null);
 
@@ -170,11 +174,7 @@ const Clap: React.FC<ClapProps> = props => {
           onMouseLeave={e => setIsHover(false)}
           isHover={isHover && count === 0}
         >
-          <IconClap
-            ref={clapIconRef}
-            className="clap--icon"
-            isClicked={isClicked}
-          />
+          <ClapIcon className="clap--icon" isClicked={isClicked} svgIcon={iconSVG} />
           <ClapCount ref={clapCountRef} className="clap--count">
             +{cnt}
           </ClapCount>

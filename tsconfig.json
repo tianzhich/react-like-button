@@ -20,7 +20,7 @@
     "jsx": "react",
     "noImplicitAny": true,
     "baseUrl": "./",
-    "strict": true,
+    "strict": true
   },
   "include": [
     "src"
