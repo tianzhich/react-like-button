@@ -1,7 +1,7 @@
 /**
  * @Date: 2019-11-18 18:23:45
  * @LastEditors: Tian Zhi
- * @LastEditTime: 2019-11-21 19:02:46
+ * @LastEditTime: 2019-11-21 21:23:34
  */
 import React, { ReactSVGElement } from "react";
 import styled, { css, StyledComponentProps } from "styled-components";
@@ -9,7 +9,6 @@ import styled, { css, StyledComponentProps } from "styled-components";
 interface ClapIconProps {
   isClicked?: boolean;
   svgIcon?: (props: IconProps) => ReactSVGElement;
-  className?: string;
 }
 export type IconProps = StyledComponentProps<"svg", any, any, never>;
 
@@ -25,8 +24,7 @@ const DefaultIcon = (props: IconProps) => (
 );
 
 export default (props: ClapIconProps) => {
-  const { svgIcon = DefaultIcon, isClicked, className } = props;
-  // const IconWithCls = (props: IconProps) => <svgIcon /> svgIcon({...props, className});
+  const { svgIcon = DefaultIcon, isClicked } = props;
 
   const StyledIcon = styled(svgIcon)`
     width: 33px;

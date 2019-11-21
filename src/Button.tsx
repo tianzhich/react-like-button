@@ -168,11 +168,7 @@ const Clap: React.FC<ClapProps> = props => {
           onMouseLeave={e => setIsHover(false)}
           isHover={isHover && count === 0}
         >
-          <ClapIcon
-            className="clap--icon"
-            isClicked={isClicked}
-            svgIcon={iconSVG}
-          />
+          <ClapIcon isClicked={isClicked} svgIcon={iconSVG} />
           <ClapCount ref={clapCountRef} className="clap--count">
             +{cnt}
           </ClapCount>

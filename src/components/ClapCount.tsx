@@ -1,7 +1,7 @@
 /**
  * @Date: 2019-11-18 18:23:45
  * @LastEditors: Tian Zhi
- * @LastEditTime: 2019-11-19 16:36:20
+ * @LastEditTime: 2019-11-21 21:27:09
  */
 import styled, { css } from "styled-components";
 import { textStyles } from "../utils";
@@ -12,6 +12,7 @@ const ClapCount = styled.span`
   color: white;
   border-radius: 50%;
   backface-visibility: hidden;
+  opacity: 0;
   ${textStyles}
 
   ${({ theme: { secondaryColor, size } }) => {
