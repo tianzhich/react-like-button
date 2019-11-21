@@ -14,6 +14,7 @@ import ClapCount from "./components/ClapCount";
 import ClapCountTotal from "./components/ClapCountTotal";
 
 interface ClapProps {
+  clicked?: boolean;
   count?: number;
   countTotal?: number;
   theme?: Record<string, any>;
@@ -22,28 +23,31 @@ interface ClapProps {
   iconSVG?: (props: IconProps) => ReactSVGElement;
 }
 
-const defaultTheme = {
+const MAX_COUNT = 200;
+const COUNT = 0;
+const COUNT_TOTAL = 0;
+const DEFAULT_THEME = {
   primaryColor: "rgb(189, 195, 199)",
   secondaryColor: "rgb(39, 174, 96)",
   size: 70
 };
-
-const MAX_COUNT = 200;
+const TL_DURATION = 300;
+const DEFAULT_CLICKED = false;
 
 const Clap: React.FC<ClapProps> = props => {
   const {
-    count = 0,
-    countTotal = 10,
-    theme = {},
+    count = COUNT,
+    countTotal = COUNT_TOTAL,
+    theme = DEFAULT_THEME,
     maxCount = MAX_COUNT,
     onCountChange,
-    iconSVG
+    iconSVG,
+    clicked = DEFAULT_CLICKED
   } = props;
 
-  const [unClicked, setUnClicked] = useState(true);
-  const [cnt, setCnt] = useState(count);
-  const [cntTotal, setCntTotal] = useState(countTotal);
-  const [isClicked, setIsClicked] = useState(count > 0);
+  const [cnt, setCnt] = useState(count >= 0 ? count : 0);
+  const [cntTotal, setCntTotal] = useState(countTotal > 0 ? countTotal : 0);
+  const [isClicked, setIsClicked] = useState(clicked);
   const [isHover, setIsHover] = useState(false);
 
   const clapButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -55,7 +59,6 @@ const Clap: React.FC<ClapProps> = props => {
 
   // 初始化
   useEffect(() => {
-    const tlDuration = 300;
     const triangleBurst = new mojs.Burst({
       parent: clapButtonRef.current,
       radius: { 50: 95 },
@@ -71,7 +74,7 @@ const Clap: React.FC<ClapProps> = props => {
         delay: 30,
         speed: 0.2,
         easing: mojs.easing.bezier(0.1, 1, 0.3, 1),
-        duration: tlDuration
+        duration: TL_DURATION
       }
     });
 
@@ -79,7 +82,7 @@ const Clap: React.FC<ClapProps> = props => {
       parent: clapButtonRef.current,
       radius: { 50: 75 },
       angle: 25,
-      duration: tlDuration,
+      duration: TL_DURATION,
       children: {
         shape: "circle",
         fill: "rgba(149,165,166 ,0.5)",
@@ -96,28 +99,26 @@ const Clap: React.FC<ClapProps> = props => {
       isShowEnd: true,
       y: { 0: -30 },
       opacity: { 0: 1 },
-      duration: tlDuration
+      duration: TL_DURATION
     }).then({
       opacity: { 1: 0 },
       y: -80,
-      delay: tlDuration / 2
+      delay: TL_DURATION / 2
     });
-
-    const opacityStart = count > 0 && unClicked ? 1 : 0;
 
     const countTotalAnimation = new mojs.Html({
       el: clapCountTotalRef.current,
       isShowStart: false,
       isShowEnd: true,
-      opacity: { [opacityStart]: 1 },
-      delay: (3 * tlDuration) / 2,
-      duration: tlDuration,
+      opacity: { 0: 1 },
+      delay: (3 * TL_DURATION) / 2,
+      duration: TL_DURATION,
       y: { 0: -3 }
     });
 
     const scaleButton = new mojs.Html({
       el: clapButtonRef.current,
-      duration: tlDuration,
+      duration: TL_DURATION,
       scale: { 1.3: 1 },
       easing: mojs.easing.out
     });
@@ -125,8 +126,8 @@ const Clap: React.FC<ClapProps> = props => {
     const clap = clapButtonRef.current;
     if (clap) clap.style.transform = "scale(1, 1)";
     animationTimeline.current = new mojs.Timeline();
-    if (animationTL) {
-      animationTL.add([
+    if (animationTimeline.current) {
+      animationTimeline.current.add([
         countAnimation,
         countTotalAnimation,
         scaleButton,
@@ -134,17 +135,10 @@ const Clap: React.FC<ClapProps> = props => {
         triangleBurst
       ]);
     }
-  }, [animationTL, count, unClicked]);
-
-  const getTheme = useCallback(() => {
-    return Object.assign({}, defaultTheme, theme);
-  }, [theme]);
+  }, [clicked]);
 
   const onClick = useCallback(() => {
     if (animationTL) animationTL.replay();
-    if (unClicked) {
-      setUnClicked(false);
-    }
 
     if (count < maxCount) {
       if (onCountChange)
@@ -153,7 +147,7 @@ const Clap: React.FC<ClapProps> = props => {
       setCntTotal(prev => prev + 1);
       setIsClicked(true);
     }
-  }, [animationTL, count, countTotal, maxCount, onCountChange, unClicked]);
+  }, [animationTL, count, countTotal, maxCount, onCountChange]);
 
   const onClickClear = useCallback(() => {
     if (onCountChange)
@@ -164,7 +158,7 @@ const Clap: React.FC<ClapProps> = props => {
   }, [cnt, count, countTotal, onCountChange]);
 
   return (
-    <ThemeProvider theme={getTheme()}>
+    <ThemeProvider theme={theme}>
       <ClapWrap isClicked={isClicked} onClickClear={onClickClear}>
         <ClapButton
           ref={clapButtonRef}
@@ -174,7 +168,11 @@ const Clap: React.FC<ClapProps> = props => {
           onMouseLeave={e => setIsHover(false)}
           isHover={isHover && count === 0}
         >
-          <ClapIcon className="clap--icon" isClicked={isClicked} svgIcon={iconSVG} />
+          <ClapIcon
+            className="clap--icon"
+            isClicked={isClicked}
+            svgIcon={iconSVG}
+          />
           <ClapCount ref={clapCountRef} className="clap--count">
             +{cnt}
           </ClapCount>
